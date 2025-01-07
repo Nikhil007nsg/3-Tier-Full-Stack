@@ -67,15 +67,26 @@ pipeline{
                 }
             }
         }
-        
-        stage("Docker Deploy To Dev Env"){
-            steps{
-                script{
-                    withDockerRegistry(credentialsId: 'docker-crd', toolName: 'docker'){
-                        sh 'docker run -d --name camp3 -p 3000:3000 nikhilsg/campground:$BUILD_NUMBER'
-                    }
+         stage('Upload Deployment File') {
+            environment {
+                GIT_REPO_NAME = "3-Tier-Full-Stack"
+                GIT_USER_NAME = "nikhil007nsg"
+            }
+            steps {
+                withCredentials([string(credentialsId: 'git-crd', variable: 'GITHUB_TOKEN')]) {
+                    sh '''
+                        git config user.email "nikhil007nsg@gmail.com"
+                        git config user.name "nikhil007nsg"
+                        BUILD_NUMBER=${BUILD_NUMBER}
+                        cp Manifests/deployment.yaml Production/
+                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/deployment.yaml
+                        git add Production/
+                        git commit -m "Update Deployment Manifest for Production"
+                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                    '''
                 }
             }
         }
+     
     }
 }
