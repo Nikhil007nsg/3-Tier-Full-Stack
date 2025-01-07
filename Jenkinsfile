@@ -78,6 +78,7 @@ pipeline{
                         git config user.email "nikhil007nsg@gmail.com"
                         git config user.name "nikhil007nsg"
                         BUILD_NUMBER=${BUILD_NUMBER}
+                        mkdir -p Production
                         cp Manifests/dss.yml Production/
                         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/dss.yml
                         git add Production/
