@@ -67,27 +67,44 @@ pipeline{
                 }
             }
         }
-         stage('Upload Deployment File') {
-            environment {
-                GIT_REPO_NAME = "3-Tier-Full-Stack"
-                GIT_USER_NAME = "nikhil007nsg"
-            }
+ //        stage('Upload Deployment File') {
+   //         environment {
+    //            GIT_REPO_NAME = "3-Tier-Full-Stack"
+     //           GIT_USER_NAME = "nikhil007nsg"
+      //      }
+       //     steps {
+        //        withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+         //           sh '''
+          //              git config user.email "nikhil007nsg@gmail.com"
+           //             git config user.name "nikhil007nsg"
+            //            BUILD_NUMBER=${BUILD_NUMBER}
+             //           mkdir -p Production
+              //          cp Manifests/dss.yml Production/
+               //         sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/dss.yml
+                //        git add Production/
+                 //       git commit -m "Update Deployment Manifest for Production"
+                //        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
+                //    '''
+          //      }
+     //       }
+   //     }
+        stage('Deploy to EKS') {
             steps {
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    sh '''
-                        git config user.email "nikhil007nsg@gmail.com"
-                        git config user.name "nikhil007nsg"
-                        BUILD_NUMBER=${BUILD_NUMBER}
-                        mkdir -p Production
-                        cp Manifests/dss.yml Production/
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/dss.yml
-                        git add Production/
-                        git commit -m "Update Deployment Manifest for Production"
-                        git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
-                    '''
-                }
-            }
-        }
-     
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'eks-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', serverUrl: 'https://852C305A54A18CF2AEC884C18727E0B1.gr7.ap-south-1.eks.amazonaws.com']]) {
+                  sh "kubectl apply -f dss.yml"
+                  sleep 60
+}
+}
+}
+         stage('Deploy to EKS') {
+            steps {
+                withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'eks-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', serverUrl: 'https://852C305A54A18CF2AEC884C18727E0B1.gr7.ap-south-1.eks.amazonaws.com']]) {
+                  sh "kubectl get pods -n webapps"
+                  sh "kubectl get svc -n webapps"
+}
+}
+}
+        
+        
     }
 }
