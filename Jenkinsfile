@@ -46,7 +46,8 @@ pipeline{
             steps{
                 script{
                     withDockerRegistry(credentialsId: 'docker-crd', toolName: 'docker') {
-                        sh 'docker build -t nikhilsg/campground:$BUILD_NUMBER .'
+                 //       sh 'docker build -t nikhilsg/campground:$BUILD_NUMBER .'
+                         sh 'docker build -t nikhilsg/campground:latest .'
                     }
                 }
             }
@@ -54,7 +55,9 @@ pipeline{
         
         stage("Trivy Image Scan"){
             steps{
-                sh 'trivy image --format table -o report.html nikhilsg/campground:$BUILD_NUMBER'
+              //  sh 'trivy image --format table -o report.html nikhilsg/campground:$BUILD_NUMBER'
+                
+                sh 'trivy image --format table -o report.html nikhilsg/campground:latest'
             }
         }
         
@@ -62,7 +65,8 @@ pipeline{
             steps{
                 script{
                     withDockerRegistry(credentialsId: 'docker-crd', toolName: 'docker') {
-                        sh 'docker push nikhilsg/campground:$BUILD_NUMBER'
+                       // sh 'docker push nikhilsg/campground:$BUILD_NUMBER'
+                         sh 'docker push nikhilsg/campground:latest'
                     }
                 }
             }
@@ -91,7 +95,7 @@ pipeline{
         stage('Deploy to EKS') {
             steps {
                 withKubeCredentials(kubectlCredentials: [[caCertificate: '', clusterName: 'eks-cluster', contextName: '', credentialsId: 'k8-token', namespace: 'webapps', serverUrl: 'https://852C305A54A18CF2AEC884C18727E0B1.gr7.ap-south-1.eks.amazonaws.com']]) {
-                  sh "kubectl apply -f dss.yml"
+                  sh "kubectl apply -f Manifests/dss.yml"
                   sleep 60
 }
 }
