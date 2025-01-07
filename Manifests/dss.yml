@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: yelp-camp-secrets
+  namespace: webapps
 type: Opaque
 data:
   CLOUDINARY_CLOUD_NAME=ZGNpNmZxcWt4Cg==
@@ -17,6 +18,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelp-camp-deployment
+  namespace: webapps
+ 
 spec:
   replicas: 1
   selector:
