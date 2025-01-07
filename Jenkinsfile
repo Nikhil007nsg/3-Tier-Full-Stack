@@ -72,7 +72,7 @@ pipeline{
             steps{
                 script{
                     withDockerRegistry(credentialsId: 'docker-crd', toolName: 'docker'){
-                        sh 'docker run -d --name camp2 -p 3000:3000 nikhilsg/campground:$BUILD_NUMBER'
+                        sh 'docker run -d --name camp3 -p 3000:3000 nikhilsg/campground:$BUILD_NUMBER'
                     }
                 }
             }
