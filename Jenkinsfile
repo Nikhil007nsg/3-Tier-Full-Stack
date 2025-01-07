@@ -78,8 +78,8 @@ pipeline{
                         git config user.email "nikhil007nsg@gmail.com"
                         git config user.name "nikhil007nsg"
                         BUILD_NUMBER=${BUILD_NUMBER}
-                        cp Manifests/dss.yaml Production/
-                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/dss.yaml
+                        cp Manifests/dss.yml Production/
+                        sed -i "s/replaceImageTag/${BUILD_NUMBER}/g" Production/dss.yml
                         git add Production/
                         git commit -m "Update Deployment Manifest for Production"
                         git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME} HEAD:main
