@@ -82,6 +82,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: yelp-camp-service
+  namespace: webapps  
 spec:
   selector:
     app: yelp-camp
